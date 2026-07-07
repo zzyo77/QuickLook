@@ -50,7 +50,7 @@ internal class KeystrokeDispatcher : IDisposable
         _validKeys =
         [
             Keys.Up, Keys.Down, Keys.Left, Keys.Right,
-            Keys.Enter, Keys.Space, Keys.Escape,
+            Keys.Enter, Keys.F9, Keys.Escape,
             Keys.F5, Keys.F11,
         ];
     }
@@ -97,7 +97,7 @@ internal class KeystrokeDispatcher : IDisposable
         _lastInvalidKeyPressTick = 0L;
 
         // skip if user is holding Space (don't skip other valid keys)
-        if (isKeyDown && e.KeyCode == Keys.Space)
+        if (isKeyDown && e.KeyCode == Keys.F9)
         {
             if (_spaceIsDown)
                 return;
@@ -118,12 +118,12 @@ internal class KeystrokeDispatcher : IDisposable
         // must be hold for 750ms before releasing.
         if (_isPreviewRequest)
         {
-            if (isKeyDown || e.KeyCode != Keys.Space ||
+            if (isKeyDown || e.KeyCode != Keys.F9 ||
                 DateTime.Now.Ticks - _spaceHoldTick >= HOLD_TO_PREVIEW_DURATION)
             {
                 InvokeRoutine(e.KeyCode, isKeyDown);
 
-                if (isKeyDown && e.KeyCode == Keys.Space)
+                if (isKeyDown && e.KeyCode == Keys.F9)
                     _spaceIsDown = true;
             }
         }
@@ -132,7 +132,7 @@ internal class KeystrokeDispatcher : IDisposable
         if (!isKeyDown)
         {
             _isPreviewRequest = false;
-            _spaceIsDown = e.KeyCode != Keys.Space && _spaceIsDown;
+            _spaceIsDown = e.KeyCode != Keys.F9 && _spaceIsDown;
         }
     }
 
@@ -148,7 +148,7 @@ internal class KeystrokeDispatcher : IDisposable
                     PipeServerManager.SendMessage(PipeMessages.RunAndClose);
                     break;
 
-                case Keys.Space:
+                case Keys.F9:
                     PipeServerManager.SendMessage(PipeMessages.Toggle);
                     break;
 
@@ -176,7 +176,7 @@ internal class KeystrokeDispatcher : IDisposable
                     PipeServerManager.SendMessage(PipeMessages.Close);
                     break;
 
-                case Keys.Space:
+                case Keys.F9:
                     if (SettingHelper.Get("AutoCloseHolding", true, "QuickLook"))
                         PipeServerManager.SendMessage(PipeMessages.Toggle);
                     break;
